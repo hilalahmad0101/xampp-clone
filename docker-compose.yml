@@ -1,17 +1,21 @@
+version: '3.8'
+
 services:
   mysql:
-    image:  mariadb:10.11
+    image: mariadb:10.11
     container_name: mariadb
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mydb
-      MYSQL_USER: user
-      MYSQL_PASSWORD: pass
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "3306:3306"
     volumes:
       - mariadb_data:/var/lib/mysql
+    networks:
+      - xampp_network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -20,9 +24,17 @@ services:
       - "8082:80"
     environment:
       PMA_HOST: mysql
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      PMA_USER: ${MYSQL_USER}
+      PMA_PASSWORD: ${MYSQL_PASSWORD}
     depends_on:
       - mysql
+    networks:
+      - xampp_network
 
 volumes:
   mariadb_data:
+
+networks:
+  xampp_network:
+    driver: bridge
